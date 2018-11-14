@@ -2643,22 +2643,6 @@ private extension AztecPostViewController {
 
         self.postEditorStateContext.updated(isBeingPublished: false)
     }
-
-    /// Uploads the post
-    ///
-    /// - Parameters:
-    ///     - completion: the closure to execute when the publish operation completes.
-    ///
-    private func uploadPost(completion: ((_ post: AbstractPost?, _ error: Error?) -> Void)?) {
-        let managedObjectContext = ContextManager.sharedInstance().mainContext
-        let postService = PostService(managedObjectContext: managedObjectContext)
-
-        postService.uploadPost(post, success: { uploadedPost in
-            completion?(uploadedPost, nil)
-        }) { error in
-            completion?(nil, error)
-        }
-    }
 }
 
 // MARK: - Computed Properties
