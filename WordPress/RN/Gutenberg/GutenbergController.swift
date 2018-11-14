@@ -10,11 +10,17 @@ class GutenbergController: UIViewController, PostEditor {
 
     let post: AbstractPost
     let gutenberg: Gutenberg
-
+    let editPostManager = EditPostManager()
     let navBarManager = PostEditorNavigationBarManager()
 
     lazy var mediaPickerHelper: GutenbergMediaPickerHelper = {
         return GutenbergMediaPickerHelper(context: self, post: post)
+    }()
+
+    /// Maintainer of state for editor - like for post button
+    ///
+    fileprivate lazy var postEditorStateContext: PostEditorStateContext = {
+        return createEditorStateContext(for: post)
     }()
 
     var mainContext: NSManagedObjectContext {
@@ -34,7 +40,7 @@ class GutenbergController: UIViewController, PostEditor {
         guard let post = post as? Post else {
             fatalError()
         }
-        self.post = post
+        self.post = post.createRevision()
         self.gutenberg = Gutenberg(props: ["initialData": post.content ?? ""])
         super.init(nibName: nil, bundle: nil)
 
@@ -91,37 +97,37 @@ extension GutenbergController {
     }
 
     func saveButtonPressed(with content: String) {
-        guard let post = post as? Post else {
-            return
-        }
         post.content = content
-        PostCoordinator.shared.save(post: post)
-        DispatchQueue.main.async { [weak self] in
-            self?.close(didSave: true)
+        let postAction = postEditorStateContext.action
+        editPostManager.update(post, with: postAction)
+        editPostManager.upload(post) { [weak self] (uploadedPost, error) in
+            self?.postEditorStateContext.updated(isBeingPublished: false)
+            DispatchQueue.main.async { [weak self] in
+                self?.close(didSave: true)
+            }
         }
     }
 }
 
 extension GutenbergController: GutenbergBridgeDelegate {
-
     func gutenbergDidRequestMediaPicker(callback: @escaping MediaPickerDidPickMediaCallback) {
         mediaPickerHelper.presentMediaPickerFullScreen(animated: true,
                                                        dataSourceType: .mediaLibrary,
                                                        callback: callback)
     }
 
-    func gutenbergDidProvideHTML(_ html: String) {
-
+    func gutenbergDidProvideHTML(_ html: String, changed: Bool) {
+        saveButtonPressed(with: html)
     }
 }
 
 extension GutenbergController: PostEditorNavigationBarManagerDelegate {
     var publishButtonText: String {
-        return "Publish"
+        return postEditorStateContext.publishButtonText
     }
 
     var isPublishButtonEnabled: Bool {
-        return true
+        return postEditorStateContext.isPublishButtonEnabled
     }
 
     var uploadingButtonSize: CGSize {
@@ -141,10 +147,21 @@ extension GutenbergController: PostEditorNavigationBarManagerDelegate {
     }
 
     func navigationBarManager(_ manager: PostEditorNavigationBarManager, publishButtonWasPressed sender: UIButton) {
+        postEditorStateContext.updated(isBeingPublished: true)
         gutenberg.requestHTML()
     }
 
     func navigationBarManager(_ manager: PostEditorNavigationBarManager, displayCancelMediaUploads sender: UIButton) {
 
+    }
+}
+
+extension GutenbergController: PostEditorStateContextDelegate {
+    func context(_ context: PostEditorStateContext, didChangeAction: PostEditorAction) {
+        navBarManager.reloadPublishButton()
+    }
+
+    func context(_ context: PostEditorStateContext, didChangeActionAllowed: Bool) {
+        navBarManager.reloadPublishButton()
     }
 }

@@ -37,6 +37,7 @@ class AztecPostViewController: UIViewController, PostEditor {
     }()
 
     private let errorDomain = "AztecPostViewController.errorDomain"
+    private let editPostManager = EditPostManager()
 
     private enum ErrorCode: Int {
         case expectedSecondaryAction = 1
@@ -543,29 +544,6 @@ class AztecPostViewController: UIViewController, PostEditor {
         }
         scrollInsets.right = -rightMargin
         referenceView.scrollIndicatorInsets = scrollInsets
-    }
-
-
-    // MARK: - Construction Helpers
-
-    /// Returns a new Editor Context for a given Post instance.
-    ///
-    private func createEditorStateContext(for post: AbstractPost) -> PostEditorStateContext {
-        var originalPostStatus: BasePost.Status? = nil
-
-        if let originalPost = post.original, let postStatus = originalPost.status, originalPost.hasRemote() {
-            originalPostStatus = postStatus
-        }
-
-        // Self-hosted non-Jetpack blogs have no capabilities, so we'll default
-        // to showing Publish Now instead of Submit for Review.
-        //
-        let userCanPublish = post.blog.capabilities != nil ? post.blog.isPublishingPostsAllowed() : true
-
-        return PostEditorStateContext(originalPostStatus: originalPostStatus,
-                                      userCanPublish: userCanPublish,
-                                      publishDate: post.dateCreated,
-                                      delegate: self)
     }
 
 
@@ -1120,24 +1098,7 @@ extension AztecPostViewController {
         let isPage = post is Page
 
         let publishBlock = { [unowned self] in
-            if action == .saveAsDraft {
-                self.post.status = .draft
-            } else if action == .publish {
-                if self.post.date_created_gmt == nil {
-                    self.post.date_created_gmt = Date()
-                }
-
-                if self.post.status != .publishPrivate {
-                    self.post.status = .publish
-                }
-            } else if action == .publishNow {
-                self.post.date_created_gmt = Date()
-
-                if self.post.status != .publishPrivate {
-                    self.post.status = .publish
-                }
-            }
-
+            self.editPostManager.update(self.post, with: action)
 
             if let analyticsStat = analyticsStat {
                 self.trackPostSave(stat: analyticsStat)
@@ -2639,7 +2600,9 @@ private extension AztecPostViewController {
         SVProgressHUD.show(withStatus: action.publishingActionLabel)
         postEditorStateContext.updated(isBeingPublished: true)
 
-        uploadPost() { uploadedPost, error in
+        mapUIContentToPostAndSave()
+        editPostManager.upload(post) { (uploadedPost, error) in
+
             self.postEditorStateContext.updated(isBeingPublished: false)
             SVProgressHUD.dismiss()
 
@@ -2687,10 +2650,9 @@ private extension AztecPostViewController {
     ///     - completion: the closure to execute when the publish operation completes.
     ///
     private func uploadPost(completion: ((_ post: AbstractPost?, _ error: Error?) -> Void)?) {
-        mapUIContentToPostAndSave()
-
         let managedObjectContext = ContextManager.sharedInstance().mainContext
         let postService = PostService(managedObjectContext: managedObjectContext)
+
         postService.uploadPost(post, success: { uploadedPost in
             completion?(uploadedPost, nil)
         }) { error in

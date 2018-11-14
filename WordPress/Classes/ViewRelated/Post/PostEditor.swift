@@ -22,6 +22,26 @@ import Gridicons
     var isOpenedDirectlyForPhotoPost: Bool { get set }
 }
 
+extension PostEditor where Self: PostEditorStateContextDelegate {
+    func createEditorStateContext(for post: AbstractPost) -> PostEditorStateContext {
+        var originalPostStatus: BasePost.Status? = nil
+
+        if let originalPost = post.original, let postStatus = originalPost.status, originalPost.hasRemote() {
+            originalPostStatus = postStatus
+        }
+
+        // Self-hosted non-Jetpack blogs have no capabilities, so we'll default
+        // to showing Publish Now instead of Submit for Review.
+        //
+        let userCanPublish = post.blog.capabilities != nil ? post.blog.isPublishingPostsAllowed() : true
+
+        return PostEditorStateContext(originalPostStatus: originalPostStatus,
+                                      userCanPublish: userCanPublish,
+                                      publishDate: post.dateCreated,
+                                      delegate: self)
+    }
+}
+
 protocol PostEditorNavigationBarManagerDelegate: class {
     var publishButtonText: String { get }
     var isPublishButtonEnabled: Bool { get }

@@ -634,6 +634,7 @@
 		7EBB4126206C388100012D98 /* StockPhotosService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EBB4125206C388100012D98 /* StockPhotosService.swift */; };
 		7ECD5B8120C4D823001AEBC5 /* MediaPreviewHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ECD5B8020C4D823001AEBC5 /* MediaPreviewHelper.swift */; };
 		7ED3695520A9F091007B0D56 /* Blog+ImageSourceInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED3695420A9F091007B0D56 /* Blog+ImageSourceInformation.swift */; };
+		7ED5BEBF219CA40F005AD43B /* EditPostManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7ED5BEBE219CA40F005AD43B /* EditPostManager.swift */; };
 		7EDAB3F420B046FE002D1A76 /* CircularProgressView+ActivityIndicatorType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EDAB3F320B046FE002D1A76 /* CircularProgressView+ActivityIndicatorType.swift */; };
 		7EF2EEA0210A67B60007A76B /* notifications-unapproved-comment.json in Resources */ = {isa = PBXBuildFile; fileRef = 7EF2EE9F210A67B60007A76B /* notifications-unapproved-comment.json */; };
 		7EFF208620EAD918009C4699 /* FormattableUserContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EFF208520EAD918009C4699 /* FormattableUserContent.swift */; };
@@ -2273,6 +2274,7 @@
 		7EBB4125206C388100012D98 /* StockPhotosService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StockPhotosService.swift; sourceTree = "<group>"; };
 		7ECD5B8020C4D823001AEBC5 /* MediaPreviewHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPreviewHelper.swift; sourceTree = "<group>"; };
 		7ED3695420A9F091007B0D56 /* Blog+ImageSourceInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Blog+ImageSourceInformation.swift"; sourceTree = "<group>"; };
+		7ED5BEBE219CA40F005AD43B /* EditPostManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EditPostManager.swift; sourceTree = "<group>"; };
 		7EDAB3F320B046FE002D1A76 /* CircularProgressView+ActivityIndicatorType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CircularProgressView+ActivityIndicatorType.swift"; sourceTree = "<group>"; };
 		7EF2EE9F210A67B60007A76B /* notifications-unapproved-comment.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = "notifications-unapproved-comment.json"; sourceTree = "<group>"; };
 		7EFF208520EAD918009C4699 /* FormattableUserContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormattableUserContent.swift; sourceTree = "<group>"; };
@@ -3841,7 +3843,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		29B97314FDCFA39411CA2CEA = {
+		29B97314FDCFA39411CA2CEA /* CustomTemplate */ = {
 			isa = PBXGroup;
 			children = (
 				7E3E9B5F2177A44400FD5797 /* RN */,
@@ -5599,6 +5601,7 @@
 				B50C0C5C1EF42A4A00372C65 /* AztecAttachmentViewController.swift */,
 				B5FDF9F220D842D2006D14E3 /* AztecNavigationController.swift */,
 				B50C0C5D1EF42A4A00372C65 /* AztecPostViewController.swift */,
+				7ED5BEBE219CA40F005AD43B /* EditPostManager.swift */,
 				B538F3881EF46EC8001003D5 /* UnknownEditorViewController.swift */,
 				FFABD7FF213423F1003C65B6 /* LinkSettingsViewController.swift */,
 				FFABD80721370496003C65B6 /* SelectPostViewController.swift */,
@@ -7490,7 +7493,7 @@
 				bg,
 				sk,
 			);
-			mainGroup = 29B97314FDCFA39411CA2CEA;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* CustomTemplate */;
 			productRefGroup = 19C28FACFE9D520D11CA2CBB /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -8718,6 +8721,7 @@
 				1746D7771D2165AE00B11D77 /* ForcePopoverPresenter.swift in Sources */,
 				D858F30120E20106007E8A1C /* LikePost.swift in Sources */,
 				1703D04C20ECD93800D292E9 /* Routes+Post.swift in Sources */,
+				7ED5BEBF219CA40F005AD43B /* EditPostManager.swift in Sources */,
 				E11C4B702010930B00A6619C /* Blog+Jetpack.swift in Sources */,
 				821738091FE04A9E00BEC94C /* DateAndTimeFormatSettingsViewController.swift in Sources */,
 				5D6C4B081B603E03005E3C43 /* WPContentSyncHelper.swift in Sources */,
@@ -10600,7 +10604,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
-				WPCOM_CONFIG = "$HOME/.wpcom_alpha_app_credentials";
+				WPCOM_CONFIG = $HOME/.wpcom_alpha_app_credentials;
 			};
 			name = "Release-Alpha";
 		};
@@ -11087,7 +11091,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
-				WPCOM_CONFIG = "$HOME/.wpcom_internal_app_credentials";
+				WPCOM_CONFIG = $HOME/.wpcom_internal_app_credentials;
 			};
 			name = "Release-Internal";
 		};
@@ -11441,7 +11445,7 @@
 				PRODUCT_MODULE_NAME = "$(PRODUCT_NAME:c99extidentifier)";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 3.0;
-				WPCOM_CONFIG = "$HOME/.wpcom_app_credentials";
+				WPCOM_CONFIG = $HOME/.wpcom_app_credentials;
 			};
 			name = Debug;
 		};
@@ -11494,7 +11498,7 @@
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 				SWIFT_VERSION = 3.0;
 				VALIDATE_PRODUCT = YES;
-				WPCOM_CONFIG = "$HOME/.wpcom_app_credentials";
+				WPCOM_CONFIG = $HOME/.wpcom_app_credentials;
 			};
 			name = Release;
 		};
