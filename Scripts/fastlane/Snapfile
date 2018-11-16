@@ -25,6 +25,10 @@ workspace File.expand_path File.dirname(__FILE__) + "../../WordPress.xcworkspace
 # in the code
 xcargs "IS_GENERATING_SCREENSHOTS=1"
 
+# We should generate screenshots in debug mode to make it easier
+# not to include `SimulatorStatusMagic` in the release build.
+configuration "Debug"
+
 reinstall_app true
 erase_simulator true
 localize_simulator true
