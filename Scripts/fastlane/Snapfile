@@ -20,6 +20,11 @@ scheme "WordPressScreenshotGeneration"
 # Where is your project (or workspace)? Provide the full path here
 workspace File.expand_path File.dirname(__FILE__) + "../../WordPress.xcworkspace"
 
+# We use an xcarg, which attaches to an LLVM preprocessor directive.
+# This makes it possible to use a simple `#if IS_GENERATING_SCREENSHOTS`
+# in the code
+xcargs "IS_GENERATING_SCREENSHOTS=1"
+
 reinstall_app true
 erase_simulator true
 localize_simulator true
