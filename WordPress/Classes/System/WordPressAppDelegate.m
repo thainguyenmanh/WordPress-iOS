@@ -30,6 +30,7 @@
 #import "TodayExtensionService.h"
 #import "WPAuthTokenIssueSolver.h"
 #import <ZendeskCoreSDK/ZendeskCoreSDK.h>
+#import "ScreenshotSetupCoordinator.h"
 
 // Networking
 #import "WPUserAgent.h"
@@ -82,6 +83,9 @@ DDLogLevel ddLogLevel = DDLogLevelInfo;
 
     // Local Notifications
     [self addNotificationObservers];
+
+    // Setup the UI properly for screenshot generation in non-release builds
+    [ScreenshotSetupCoordinator prepare];
 
     WPAuthTokenIssueSolver *authTokenIssueSolver = [[WPAuthTokenIssueSolver alloc] init];
     
